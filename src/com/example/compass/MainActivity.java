@@ -26,6 +26,9 @@ public class MainActivity extends Activity {
 	private ImageView compassImg;
 	private ImageView arrowImg;
 	private float lastRotateDegree;
+	
+	//Œª÷√œ‡πÿ
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
