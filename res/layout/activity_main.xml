@@ -50,25 +50,8 @@
         android:layout_below="@+id/latitude"
         android:layout_marginTop="14dp"
         android:paddingLeft="20dp"
-        android:text="当前位置：" />
-
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/compass_img"
-        android:layout_below="@+id/compass_img"
-        android:layout_marginTop="40dp"
-        android:text="纬度：" />
-
-    <TextView
-        android:id="@+id/langitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/location"
-        android:layout_toRightOf="@+id/textView4"
-        android:text="langitude"
-         />
+        android:gravity="center"
+        android:text="获取当前位置中..." />
 
     <TextView
         android:id="@+id/latitude"
@@ -76,16 +59,32 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textview"
         android:layout_alignBottom="@+id/textview"
-        android:layout_toRightOf="@+id/textview"
-        android:text="latitude"
-        />
+        android:layout_toLeftOf="@+id/arrow_img"
+        android:text="获取中..." />
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/compass_img"
+        android:layout_marginTop="41dp"
+        android:layout_toLeftOf="@+id/latitude"
+        android:text="纬度：" />
+
+    <TextView
+        android:id="@+id/langitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/location"
+        android:layout_alignRight="@+id/compass_img"
+        android:text="获取中..." />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/langitude"
-        android:layout_toRightOf="@+id/arrow_img"
+        android:layout_above="@+id/location"
+        android:layout_toLeftOf="@+id/langitude"
         android:text="经度：" />
 
 </RelativeLayout>

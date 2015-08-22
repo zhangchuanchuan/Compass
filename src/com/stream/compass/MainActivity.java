@@ -1,5 +1,15 @@
 package com.stream.compass;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,36 +20,54 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	private SensorManager sensorManager;
-
 	private SharedPreferences pres;
 	private Editor editor;
 	private ImageView compassImg;
 	private ImageView arrowImg;
 	private float lastRotateDegree;
 	
+	
 	//位置相关
+	private LocationManager locationManager;
+	private String provider;
 	private TextView latitude;
 	private TextView langitude;
+	private TextView location;
+	private Location gpsLocation;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setContentView(R.layout.activity_main);
         //获得数据
 		pres = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = pres.edit();
 		
-        setContentView(R.layout.activity_main);
+		//获得位置控件
+		latitude = (TextView)findViewById(R.id.latitude);
+		langitude = (TextView)findViewById(R.id.langitude);
+		location = (TextView)findViewById(R.id.location);
+	      //位置逻辑
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        
         compassImg = (ImageView)findViewById(R.id.compass_img);
         arrowImg = (ImageView)findViewById(R.id.arrow_img);
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -49,7 +77,25 @@ public class MainActivity extends Activity {
         sensorManager.registerListener(listener, aSensor, SensorManager.SENSOR_DELAY_GAME);
         sensorManager.registerListener(listener, mSensor, SensorManager.SENSOR_DELAY_GAME);
         
-      
+
+        
+       //判断是否存在可用服务
+        List<String> providers = locationManager.getProviders(true);
+        if(providers.contains(LocationManager.GPS_PROVIDER)){
+        	provider = LocationManager.GPS_PROVIDER;
+        }else if(providers.contains(LocationManager.NETWORK_PROVIDER)){
+        	provider = LocationManager.NETWORK_PROVIDER;
+        }else{
+        	Toast.makeText(this, "location service is not used", Toast.LENGTH_SHORT).show();
+        	return;
+        }
+        gpsLocation = locationManager.getLastKnownLocation(provider);
+        if(gpsLocation!=null){
+        	showLocation(gpsLocation);
+        }
+        locationManager.requestLocationUpdates(provider, 5000, 1, ll);
+        
+        
     }
 	
 	@Override
@@ -58,6 +104,9 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 		if(sensorManager!=null){
 			sensorManager.unregisterListener(listener);
+		}
+		if(locationManager!=null){
+			locationManager.removeUpdates(ll);
 		}
 	}
 
@@ -142,5 +191,103 @@ public class MainActivity extends Activity {
 		builder.create().show();
 		return true;
 	}
+	
+	/**
+	 * 获得位置信息
+	 */
+	
+	
+	
+	/**
+	 * 显示当前的位置信息
+	 */
+	private void showLocation(Location location){
+		latitude.setText(location.getLatitude()+"");
+		langitude.setText(location.getLongitude()+"");
+		getPostion(location);
+	}
+	
+	/**
+	 * 开启一个子线程去网络查找当前位置信息
+	 */
+    private void getPostion(final Location location){
+    	new Thread(new Runnable(){
 
+			@Override
+			public void run() {
+				StringBuilder url = new StringBuilder();
+				url.append("http://api.map.baidu.com/geocoder/v2/?" +
+						"ak=GCUtx4VCxRWURvEj4d2AWVHc&location=");
+				url.append(location.getLatitude()+",");
+				url.append(location.getLongitude()+"&output=json");
+				url.append("&mcode=43:2F:A6:9D:14:D0:D8:E3:15:D6:88:3F:A1:D2:12:19;" +
+							"com.stream.compass");
+				HttpURLConnection connection = null;
+				try {
+					connection = (HttpURLConnection) new URL(url.toString()).openConnection();
+					connection.setRequestMethod("GET");
+					InputStream in = connection.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					StringBuilder response = new StringBuilder();
+					String line;
+					while((line=reader.readLine())!=null){
+						response.append(line);
+					}
+					JSONObject status = new JSONObject(response.toString());
+					JSONObject result = status.getJSONObject("result");
+					String add = result.getString("formatted_address");
+
+						if(add!=null){
+							Message msg = new Message();
+							msg.what = 0;
+							msg.obj = add;
+							handler.sendMessage(msg);
+						}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+    		
+    	}).start();
+    }
+    
+    private Handler handler=new Handler(){
+    	public void handleMessage(android.os.Message msg) {
+    		switch(msg.what){
+    		case 0:
+    			String postion = (String)msg.obj;
+    			location.setText(postion);
+    			break;
+    		default:
+    			break;
+    		}
+    	}
+    };
+
+    /**
+     * 位置监听器
+     */
+ LocationListener ll = new LocationListener() {
+		
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			
+		}
+		
+		@Override
+		public void onProviderEnabled(String provider) {
+			
+		}
+		
+		@Override
+		public void onProviderDisabled(String provider) {
+			
+		}
+		
+		@Override
+		public void onLocationChanged(Location location) {
+			showLocation(location);
+		}
+	};
 }
