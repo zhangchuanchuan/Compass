@@ -67,6 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/location"
         android:layout_toRightOf="@+id/textView4"
+        android:text="langitude"
          />
 
     <TextView
@@ -76,6 +77,7 @@
         android:layout_alignBaseline="@+id/textview"
         android:layout_alignBottom="@+id/textview"
         android:layout_toRightOf="@+id/textview"
+        android:text="latitude"
         />
 
     <TextView

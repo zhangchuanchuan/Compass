@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private SensorManager sensorManager;
@@ -28,7 +29,8 @@ public class MainActivity extends Activity {
 	private float lastRotateDegree;
 	
 	//Œª÷√œ‡πÿ
-	
+	private TextView latitude;
+	private TextView langitude;
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
