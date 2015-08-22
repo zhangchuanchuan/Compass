@@ -41,4 +41,49 @@
         android:textColor="#7B68EE"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/latitude"
+        android:layout_marginTop="14dp"
+        android:paddingLeft="20dp"
+        android:text="当前位置：" />
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/compass_img"
+        android:layout_below="@+id/compass_img"
+        android:layout_marginTop="40dp"
+        android:text="纬度：" />
+
+    <TextView
+        android:id="@+id/langitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/location"
+        android:layout_toRightOf="@+id/textView4"
+         />
+
+    <TextView
+        android:id="@+id/latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textview"
+        android:layout_alignBottom="@+id/textview"
+        android:layout_toRightOf="@+id/textview"
+        />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/langitude"
+        android:layout_toRightOf="@+id/arrow_img"
+        android:text="经度：" />
+
 </RelativeLayout>
